@@ -1,0 +1,101 @@
+<div class="wizard-wrapper stepsWizard">
+    <div class="wizard-head row collapse">
+        <div class="columns fullHeight large-4">
+            <div class="row collapse fullWidth fullHeight display-flex">
+                <div class="large-2 columns row flex-self-center">
+                    <p class="font-size-50 line-height-52 lt-gray-66 text-right" style="font-weight: 300;" data-bind="text: getReadableIndex()"></p>
+                </div>
+                <div class="large-10 columns row flex-self-center"><h1 class="padding-left-8" data-bind="text: title"></div>
+            </div>
+        </div>
+        <div class="columns large-4 no-padding valign-middle fullHeight">
+            <div class="row collapse columns">
+                <ko.select class="tr-ignore-old-style" params="
+                                            type:           0,
+                                            options:        accounts,
+                                            optionsText:    'name',
+                                            disable:        cannotSwitchAccount,
+                                            optionsConfirm: {
+                                                confirmBefore: $data.beforeConfirm.bind($data),
+                                                confirmAfter: $data.afterConfirm.bind($data),
+                                                confirmOnlyIf: $data.hasChanges.bind($data),
+                                                confirmMessage: 'Changing ad account will delete all defined parameters'
+                                            },
+                                            selected:       selectedAdAccount
+                    "></ko.select>
+            </div>
+        </div>
+        <div class="columns large-4 valign-middle fullHeight">
+            <i class="tr-icon-close top-right icon-font-size-10 lt-gray-78 margin-top-10 margin-right-10" data-bind="click: cancel"></i>
+            <div class="row columns collapse">
+                <ul class="steps-menu" data-bind="foreach: stepsArr">
+                    <li data-bind="css: {
+                            'step-active': $parent.currentIndex() == $index(),
+                            'step-done': $parent.currentIndex() > $index()
+                        },
+                        click: $parent.goToIndex.bind($parent, $index),
+                        tip: {
+                            contentAsHTML: true,
+                            title: $parent.stepsModels() &&  $parent.stepsModels()[$index()] && $parent.stepsModels()[$index()].titleSummary
+                        }"><span></span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="wizard-body row clearfix collapse">
+
+        <div data-bind='component: { name: "boost--wizard--" + currentStep(), params: { parent: $data } }'></div>
+    </div>
+    <div class="wizard-footer row centered fixed-bottom padding-top-5 fullWidth">
+        <button class="button btn-medium margin-right-8" data-bind="click: goPrevious, enable: canGoPrevious">Previous</button>
+        <button class="button btn-medium btn-primary margin-right-8" data-bind="click: isLastStep() ? submitFunc : goNext, text: isLastStep() ? submitButtonText : 'Next'"></button>
+        <a class="btn" data-bind="click: cancel" href="javascript:void(0)">Cancel</a>
+    </div>
+</div>
+
+
+<script type="javascript">
+
+    $( document ).ready(function()
+    {
+        require(
+            [
+                'resource!ko/components/stepsWizard',
+                'resource!boost/dashboard/BoostDetailsManager'
+            ],
+            function(StepsWizard, BoostDetailsManager)
+            {
+                var params = {
+                    steps: ['Campaign', 'Audience', 'Budget', 'Creative', 'Summary'],
+                    submitButtonText: 'Boost!',
+                    submitButtonFuncName: 'submit',
+                    element: App.element
+                };
+
+                window.Tracx = window.Tracx || { };
+                window.Tracx.boostWizard = new StepsWizard(params);
+                window.Tracx.boostDetails = new BoostDetailsManager($("#BoostDetailsSideBar"));
+            }
+        );
+    });
+
+    function initializeBoostWizard(initCallback)
+    {
+        ko.applyBindings(window.Tracx.boostWizard, App.element[0]);
+
+        if ( _.isFunction(initCallback))
+        {
+            initCallback();
+        }
+    }
+
+    function initializeBoostDetailsWizard(initCallback)
+    {
+        ko.applyBindings(window.Tracx.boostDetails, $("#BoostDetailsSideBar")[0]);
+
+        if ( _.isFunction(initCallback))
+        {
+            initCallback();
+        }
+    }
+</script>

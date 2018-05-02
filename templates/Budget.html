@@ -1,0 +1,139 @@
+<div class="wizard-step-wrapper">
+    <!-- Life time budget region -->
+    <div class="row collapse padding-top-15 padding-bottom-15 display-flex vertical-center">
+        <div class="column large-2 text-right font-weight-stronger">
+            Life Time Budget
+        </div>
+        <div class="column large-8 large-offset-1 end">
+            <div class="row collapse prefix-radius">
+                <div class="large-3 columns">
+                    <span class="prefix text-center padding-bottom-0 padding-top-0">
+                        <!-- ko if $data.currencyIcon().isMapped -->
+                        <i data-bind="css: ' tr-icon-'+ $data.currencyIcon().returnData"></i>
+                        <!-- /ko -->
+                        <!-- ko if: !$data.currencyIcon().isMapped -->
+                            <!-- ko text: $data.currencyIcon().returnData --><!-- /ko -->
+                        <!-- /ko -->
+                    </span>
+                </div>
+                <div class="large-9 columns" data-bind="validationOptions: { insertMessages: true, messagesOnModified: true }">
+                    <input type="text" placeholder="" data-bind="textInput: $data.lifeTimeBudget,
+                    css:{ hasErrors: $data.lifeTimeBudget.isModified() && !$data.lifeTimeBudget.isValid() }" />
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Life time budget region -->
+
+    <!-- Start & end date region -->
+    <div class="row collapse padding-top-15 padding-bottom-15 border-bottom-dashed display-flex vertical-center">
+        <div class="column large-2 text-right font-weight-stronger">
+            Start and End Date
+        </div>
+        <div class="column large-8 large-offset-1 end">
+            <span class="date-picker">
+                <i class="tr-icon-calendar icon-font-size-16 padding-top-12 padding-left-8"></i>
+                <input type="text" class="text-center short" data-bind="fdatepicker: { date: $data.startDate,
+                datepickerOptions: {
+                    startDate: $data.minDate,
+                    initialDate: $data.startDate(),
+                    dateFormat: $data.dateFormat,
+                    isUsingMoment: true,
+                    changeCallback: $data.dateChangeCallback.bind($data),
+                    element: $element
+                 } }" value=""/>
+            </span>
+            <span style="display: inline-block;" class="vertical-align-top margin-top-12">&nbsp;-&nbsp;</span>
+            <span class="date-picker">
+                <i class="tr-icon-calendar icon-font-size-16 padding-top-12 padding-left-8"></i>
+                <input type="text" class="text-center short contractTo" id="contractTo"
+                       data-bind="fdatepicker: { date: $data.endDate,
+                       datepickerOptions: {
+                            startDate: $data.minDate,
+                            initialDate:$data.endDate(),
+                            dateFormat: $data.dateFormat,
+                            isUsingMoment:     true,
+                            element: $element
+                       } }"  value="" />
+            </span>
+        </div>
+    </div>
+    <!-- / Start & end date region -->
+    <!-- Optimization -->
+    <div class="row collapse step-row padding-top-20 padding-bottom-20 display-flex vertical-center">
+        <div class="column large-2 text-right font-weight-stronger">
+            Optimization For
+            Ad Delivery
+        </div>
+        <div class="column large-8 large-offset-1 end">
+            <ko.select class="tr-ignore-old-style large" params="
+                                        type:           0,
+                                        options:        adDeliveryOptions,
+                                        optionsText:    'text',
+                                        optionsValue:   'id',
+                                        selected:       optimizationForAdDelivery
+                "></ko.select>
+        </div>
+    </div>
+
+    <div class="row collapse step-row padding-top-20 padding-bottom-20 display-flex vertical-center">
+        <div class="column large-2 text-right font-weight-stronger">
+            When you get charged
+        </div>
+        <div class="column large-8 large-offset-1 end">
+            <ko.select class="tr-ignore-old-style large" params="
+                                        type:           0,
+                                        options:        billingEventOptions,
+                                        optionsText:    'text',
+                                        optionsValue:   'id',
+                                        selected:       whenYouGetCharged
+                "></ko.select>
+        </div>
+    </div>
+
+    <div class="row collapse step-row padding-top-20 padding-bottom-20 border-bottom-dashed">
+        <div class="column large-2 text-right font-weight-stronger">
+            Bid Amount
+        </div>
+        <div class="column large-8 large-offset-1 end">
+            <div class="row column padding-bottom-10 padding-left-0">
+                <div class="column large-4">
+                    <span class="tracx-radio">
+                        <input class="tr-ignore-old-style" type="radio" name="bid-amount" id="bid-amount-auto" data-bind="checked: bidType, value: $data.wizard.ENUMS.BID.AUTO">
+                        <label for="bid-amount-auto">
+                            <span><i></i></span>
+                            Automatic
+                        </label>
+                    </span>
+                </div>
+            </div>
+            <div class="row column padding-left-0">
+                <div class="column large-4">
+                    <span class="tracx-radio">
+                        <input class="hidden tr-ignore-old-style" type="radio" name="bid-amount" id="bid-amount-manual" data-bind="checked: bidType, value: $data.wizard.ENUMS.BID.MANUAL">
+                        <label for="bid-amount-manual">
+                            <span><i></i></span>
+                            Manual
+                        </label>
+                    </span>
+                </div>
+                <div class="column large-4 end" data-bind="validationOptions: { insertMessages: false }">
+                    <input type="text" class="margin-top--10" data-bind="value: bidAmountManual, visible: bidType()===$data.wizard.ENUMS.BID.MANUAL, css:{ hasErrors: bidAmountManual.isModified() && !bidValidation() }"/>
+                    <span class="validationMessage" data-bind="visible: bidType()===$data.wizard.ENUMS.BID.MANUAL && bidAmountManual.isModified() && !bidValidation(),text: bidAmountManual.error"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--<div class="row collapse step-row padding-top-20 padding-bottom-20">-->
+        <!--<div class="column large-2 text-right">-->
+            <!--Estimated Potential Reach-->
+        <!--</div>-->
+        <!--<div class="column large-2 large-offset-1 end">-->
+            <!--<input class="" type="text" disabled="disabled" name="estimated-reach" data-bind="value: estimatedReach">-->
+        <!--</div>-->
+        <!--<div class="column large-7 end">-->
+            <!--<p class="padding-left-5">Number shown is based on active people on facebook that match the audience you defined through your audience targeting selections.</p>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!-- /Optimization -->
+</div>

@@ -1,0 +1,227 @@
+<div class="wizard-step-wrapper" id="audience-step-wrapper">
+    <!-- Location region -->
+    <div class="row collapse step-row padding-top-20 padding-bottom-20 dashed-bottom">
+        <div class="column large-2 text-right font-weight-stronger">
+            Location
+        </div>
+        <div class="column large-8 large-offset-1 end relative">
+            <i class="icon-font-size-22 tr-icon-load-audience top-right padding-left-15" data-bind="tip: { title: 'Load Saved Audience'}, event: { mouseover: showAudienceMenu, mouseout: hideAudienceMenu.bind($root)}">
+                <div class="hover-menu" data-bind="with: $parent.selectedAdAccount">
+                    <ul data-bind="foreach: audiences">
+                        <li data-bind="click: $component.loadAudience.bind($component, $data)">
+                            <i class="tr-icon-check" data-bind="css: { 'selected': ($component.currentLoadedAudience().audienceID == audienceID) }"></i>
+                            <i class="tr-icon-close" data-bind="click: $component.deleteAudience.bind($component, $data)"></i>
+                            <span data-bind="text: name"></span>
+                        </li>
+                    </ul>
+                </div>
+            </i>
+
+            <p class="margin-bottom-5 font-size-12 lt-gray-54">Target users by country, states, cities</p>
+            <ko.select class="tr-ignore-old-style large" params="
+                                        options:        locationTypes,
+                                        optionsText:    'type',
+                                        selected:       locationType
+                "></ko.select>
+            <div class="ui-widget tags-input margin-top-15" data-bind="css: { hasErrors: !isLocationsValid() }">
+                <input type="text" placeholder="Search for locations, e.g. US" class="start tr-ignore-old-style margin-bottom-1 left"
+                       data-bind="remoteAutoComplete: {
+                       type: $parent.ENUMS.AUTOCOMPLETE.LOCATION,
+                       parent: $parent,
+                       countries: { collection: countriesCollection, limit: $parent.ENUMS.LIMITS.COUNTRIES },
+                       cities: { collection: citiesCollection, limit: $parent.ENUMS.LIMITS.CITIES },
+                       states: { collection: statesCollection, limit:  $parent.ENUMS.LIMITS.STATES },
+                       focus: $data.locationHasFocus.bind($data)
+                       }" />
+            </div>
+            <span class="validationMessage" data-bind="visible: !isLocationsValid()">select at least one location</span>
+        </div>
+    </div>
+    <!-- /Location region -->
+
+    <!-- Age region -->
+    <div class="row collapse step-row dashed-bottom padding-top-20 padding-bottom-20">
+        <div class="column large-2 text-right font-weight-stronger">
+            Age
+        </div>
+        <div class="column large-4 large-offset-1 end">
+            <div class="radius" data-bind="rangeSlide: {min: AUDIENCE.MIN_AGE, max: AUDIENCE.MAX_AGE, values: { min: minAge, max: maxAge } }"></div>
+        </div>
+    </div>
+    <!-- /Age region -->
+
+    <!-- Gender region -->
+    <div class="row collapse step-row padding-top-20 padding-bottom-20 dashed-bottom">
+        <div class="column large-2 text-right font-weight-stronger">
+            Gender
+        </div>
+        <div class="column large-9 display-flex">
+            <span class="tracx-checkbox inline-block">
+                <input type="checkbox" value="0" id="audienceGenderAll" data-bind="checked: genderAll">
+                <label class="margin-right-15 relative" for="audienceGenderAll">
+                    <span class="margin-right-10"><i class="lt-green-6 tr-icon-check"></i></span>
+                    <p>All</p>
+                </label>
+            </span>
+
+            <span class="tracx-checkbox inline-block">
+                <input type="checkbox" value="0" id="audienceGenderMale" data-bind="checked: males, disable: genderAll()">
+                <label class="margin-right-15 relative" for="audienceGenderMale">
+                    <span class="margin-right-10"><i class="lt-green-6 tr-icon-check"></i></span>
+                    <p>Male</p>
+                </label>
+            </span>
+
+            <span class="tracx-checkbox inline-block">
+                <input type="checkbox" value="0" id="audienceGenderFemale" data-bind="checked: females, disable: genderAll()">
+                <label class="margin-right-15 relative" for="audienceGenderFemale">
+                    <span class="margin-right-10"><i class="lt-green-6 tr-icon-check"></i></span>
+                    <p>Female</p>
+                </label>
+            </span>
+            <span data-bind="text: gender.error, visible: !gender.isValid()" class="lt-red-12 margin-left-10"></span>
+        </div>
+    </div>
+    <!--/Gender region-->
+
+    <!-- Language region -->
+    <div class="row collapse step-row padding-top-20 padding-bottom-20 dashed-bottom display-flex vertical-center">
+        <div class="column large-2 text-right font-weight-stronger">
+            Language
+        </div>
+        <div class="column large-8 large-offset-1 end">
+            <div class="ui-widget tags-input">
+                <input class="start tr-ignore-old-style" type="text" placeholder="Add language"
+                       data-bind="remoteAutoComplete: { type: $parent.ENUMS.AUTOCOMPLETE.LANGUAGE, parent: $parent, languages: { collection: languagesCollection, limit:  $parent.ENUMS.LIMITS.LANGUAGE}}" />
+            </div>
+        </div>
+    </div>
+    <!-- /Language region -->
+
+    <!-- Detailed region -->
+    <div class="row collapse step-row padding-top-20 padding-bottom-20 dashed-bottom">
+        <div class="column large-2 text-right margin-top-10 font-weight-stronger">
+            Detailed Targeting
+        </div>
+        <div class="column large-8 large-offset-1 end">
+            <div class="row collapse">
+                <div data-bind="with: interestsManager, visible: interestsManager.showInterestBox" class="interestsManager">
+                    <ul data-bind="foreach: categories, visible: categories().length" class="left">
+                        <!-- ko if: $data.items().length > 0 -->
+                        <li class="margin-bottom-15 clear fullWidth">
+                            <div class="breadcrumbs margin-bottom-10">
+                                <i class="tr-icon-close float-right margin-top-2 icon-font-size-10" data-bind="click: $parent.deleteCategory.bind($parent), tip: { position: 'top' }" title="Remove All"></i>
+                                <!-- ko foreach: path -->
+                                <span data-bind="text: $data"></span>
+                                <!-- /ko -->
+                            </div>
+                            <ul data-bind="foreach: items" class="search-result-tags tags">
+                                <li class="tag-label">
+                                    <span data-bind="text: name"></span>
+                                    <i class="tr-icon-close float-right margin-left-5" data-bind="click: $parents[1].deleteItem.bind($parents[1])"></i>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- /ko -->
+                    </ul>
+                </div>
+            </div>
+            <div class="row collapse interest-row-wrapper">
+                <div class="column large-10">
+                    <div class="ui-widget tags-input tags-input-with-button relative">
+                        <input class="start interestsCollectionInput tr-ignore-old-style" type="text" placeholder="Add Interests"
+                               data-bind="remoteAutoComplete: { type: $parent.ENUMS.AUTOCOMPLETE.INTEREST, parent: $parent, interests: { collection: interestsCollection, limit: $parent.ENUMS.LIMITS.INTERESTS, jsTreeInstance: interestsTreeInstance, readCollection: interests}, model: $data}" />
+                    </div>
+                </div>
+                <div class="column large-2 end relative">
+                    <a href="javascript:void(0)" class="btn button browseDetailedTargeting" data-bind="click: toggleInterests">Browse</a>
+                </div>
+                <div class="browseResults border-solid float-right jstree-interest"
+                     data-bind="jstree: { instance: interestsTreeInstance, manager: interestsManager, collection: interestsCollection, plugins: ['checkbox', 'changed','conditionalselect'] }, visible: showInterests ">
+                    <div id="container"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- exclude interests -->
+        <div class="column large-8 large-offset-1 large-offset-3 margin-top-15 end">
+            <div class="row collapse">
+                <div data-bind="with: excludedInterestsManager, visible: excludedInterestsManager.showInterestBox" class="interestsManager">
+                    <ul data-bind="foreach: categories, visible: categories().length" class="left">
+                        <!-- ko if: $data.items().length > 0 -->
+                        <li class="margin-bottom-15 clear fullWidth">
+                            <div class="breadcrumbs margin-bottom-10">
+                                <i class="tr-icon-close float-right margin-top-2 icon-font-size-10" data-bind="click: $parent.deleteCategory.bind($parent)"></i>
+                                <!-- ko foreach: path -->
+                                <span data-bind="text: $data"></span>
+                                <!-- /ko -->
+                            </div>
+                            <ul data-bind="foreach: items" class="search-result-tags tags">
+                                <li class="tag-label">
+                                    <span data-bind="text: name"></span>
+                                    <i class="tr-icon-close float-right margin-left-5" data-bind="click: $parents[1].deleteItem.bind($parents[1])"></i>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- /ko -->
+                    </ul>
+                </div>
+            </div>
+            <div class="row collapse interest-row-wrapper">
+                <div class="column large-10">
+                    <div class="ui-widget tags-input tags-input-with-button relative">
+                        <input class="start interestsCollectionInput tr-ignore-old-style" type="text" placeholder="Exclude Interests"
+                               data-bind="remoteAutoComplete: { type: $parent.ENUMS.AUTOCOMPLETE.INTEREST, parent: $parent, interests: { collection: excludedInterestsCollection, limit: $parent.ENUMS.LIMITS.INTERESTS, jsTreeInstance: excludedInterestsTreeInstance, readCollection: excludedInterests}, model: $data}" />
+                    </div>
+                </div>
+                <div class="column large-2 end relative">
+                    <a href="javascript:void(0)" class="btn button browseDetailedTargeting" data-bind="click: toggleExcludedInterests">Browse</a>
+                </div>
+                <div class="browseResults border-solid float-right jstree-exclude-interest"
+                     data-bind="jstree: { instance: excludedInterestsTreeInstance,collection: excludedInterestsCollection, manager: excludedInterestsManager, plugins: ['checkbox', 'changed','conditionalselect'] }, visible: showExcludedInterests">
+                    <div id="container"></div>
+                </div>
+            </div>
+        </div>
+        <!-- /exclude interests -->
+
+    </div>
+    <!-- /Detailed region -->
+
+    <div class="row collapse step-row padding-top-20 padding-bottom-20">
+        <div class="column large-2 text-right margin-top-10 font-weight-stronger">
+            Connection
+        </div>
+        <div class="column large-8 large-offset-1 end">
+            <ko.select class="tr-ignore-old-style large" params="
+                                            type:           0,
+                                            options:        connectionsTypes,
+                                            optionsText:    'text',
+                                            optionsValue:   'id',
+                                            selected:       connection,
+                                            caption:        'Add a connection type'
+                    "></ko.select>
+        </div>
+    </div>
+    <!-- Save audience region -->
+    <div class="row collapse step-row margin-top-10 padding-bottom-20">
+        <div class="column large-8 large-offset-3 end">
+            <span class="tracx-checkbox inline-block">
+                <input type="checkbox" value="0" id="audienceSave" data-bind="checked: isAudienceToSave">
+                <label class="margin-right-10 relative" for="audienceSave">
+                    <span><i class="icon-font-size-16 lt-green-6 tr-icon-check"></i></span>
+                    <p>save audience</p>
+                </label>
+            </span>
+        </div>
+        <div class="column large-8 large-offset-3 padding-top-20 clear end" data-bind="visible: isAudienceToSave">
+            <input type="text" data-bind="value: audienceName,css: { 'validation-error': !isAudienceNameValid()}" />
+            <span class="validationMessage" data-bind="visible: !isAudienceNameValid()">please add name</span>
+        </div>
+        <div class="column large-8 large-offset-3 padding-top-10 clear end" data-bind="visible: isAudienceToSave">
+            <button class="button margin-right-8" data-bind="click: cancelAudienceSaving">Cancel</button>
+            <button class="button btn-primary" data-bind="click: saveAudience, enable: isAudienceLoaded() || ( +currentLoadedAudience().audienceID === +deletedAudienceID() ) ">Save</button>
+        </div>
+    </div>
+    <!-- /Save audience region -->
+</div>

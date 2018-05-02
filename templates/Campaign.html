@@ -1,0 +1,54 @@
+<div class="wizard-step-wrapper">
+    <ko.style--tabs class="margin-left--40 margin-right--40 dashed-bottom"
+                    params="tabs: _TABS, border: false, onChange: onTabChange.bind($component), instance: tabsInstance"></ko.style--tabs>
+
+    <!-- ko if: currentTab() === 'Create New Campaign' -->
+        <div class="row collapse step-row dashed-bottom padding-top-20 padding-bottom-20 display-flex vertical-center" data-bind="visible: currentTab() === 'Create New Campaign' ">
+            <div class="column large-2 text-right font-weight-stronger">
+                Campaign Name
+            </div>
+            <div class="column large-8 large-offset-1 end" data-bind="validationOptions: { insertMessages: true, messagesOnModified: true }">
+                <input class="tr-ignore-old-style" type="text" placeholder="Campaign Name" data-bind="
+                    value: name,
+                    css:{ hasErrors: name.isModified() && !name.isValid() }" />
+            </div>
+        </div>
+        <div class="row collapse step-row dashed-bottom padding-top-20 padding-bottom-20  display-flex vertical-center">
+            <div class="column large-2 text-right font-weight-stronger">
+                Ad Set Name
+            </div>
+            <div class="column large-8 large-offset-1 end" data-bind="validationOptions: { insertMessages: true, messagesOnModified: true }">
+                <input class="tr-ignore-old-style" type="text" placeholder="adSet Name" data-bind="value: adSetName, css:{ hasErrors: adSetName.isModified() && !adSetName.isValid() }" />
+            </div>
+        </div>
+    <!-- /ko -->
+
+    <!-- ko if: currentTab() === 'Create Ad Set' -->
+        <div class="row collapse step-row dashed-bottom padding-top-20 padding-bottom-20  display-flex vertical-center" data-bind="visible: currentTab() === 'Create Ad Set', validationOptions: { insertMessages: true, messagesOnModified: true }">
+            <div class="column large-2 text-right font-weight-stronger">
+                Select Campaign
+            </div>
+            <div class="column large-8 large-offset-1 end">
+                <ko.select class="tr-ignore-old-style large" params="
+                                            type:           0,
+                                            options:        campaigns,
+                                            optionsText:    'name',
+                                            optionsValue:   'id',
+                                            optionsSearch:  'name',
+                                            selected:       selectedExternalCampaign,
+                                            caption:        'Select Campaign...'
+                    "></ko.select>
+            </div>
+        </div>
+
+        <div class="row collapse step-row dashed-bottom padding-top-20 padding-bottom-20 display-flex vertical-center">
+            <div class="column large-2 text-right font-weight-stronger">
+                Ad Set Name
+            </div>
+            <div class="column large-8 large-offset-1 end" data-bind="validationOptions: { insertMessages: true, messagesOnModified: true }">
+                <input class="tr-ignore-old-style" type="text" placeholder="adSet Name" data-bind="value: adSetName, css:{ hasErrors: adSetName.isModified() && !adSetName.isValid() }" />
+            </div>
+        </div>
+    <!-- /ko -->
+
+</div>

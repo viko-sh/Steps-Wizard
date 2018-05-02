@@ -1,0 +1,31 @@
+<div class="wizard-step-wrapper">
+    <div class="row padding-top-15 padding-bottom-10">
+        <b>You have selected:</b>
+    </div>
+
+    <!-- ko if: estimatedReach -->
+        <div class="row">
+            <div class="row padding-top-15 padding-bottom-15 dashed-bottom relative">
+                <div class="columns large-3 lt-gray-48">Estimated Reach</div>
+                <div class="columns large-9 strong" data-bind="html: estimatedReach"></div>
+            </div>
+        </div>
+    <!-- /ko -->
+
+    <!-- ko foreach: $root.stepsModels() -->
+        <!-- ko if: $root.stepsArr()[$root.stepsArr().length - 1] !== $data.title -->
+            <div class="row step-row dashed-bottom padding-bottom-15 relative">
+                <h3 class="padding-top-15 boldedText lt-gray-30" data-bind="text: $data.title"></h3>
+                <div data-bind="foreach: $data.getKeys()">
+                    <!-- ko if: ko.isObservable($parent[$data]) && !ko.utils.isEmpty($parent[$data]) && $parent[$data].showOnSummary() -->
+                    <div class="row padding-top-15">
+                        <div class="columns large-3 lt-gray-48 line-height-20" data-bind="text: $parent.formatToForm($data)"></div>
+                        <div class="columns large-9 overflow-y font-weight-stronger max-height-250 line-height-20" data-bind="html: $component.showKeyContent($parent[$data], 'name')"></div>
+                    </div>
+                    <!-- /ko -->
+                </div>
+                <i class="tr-icon-edit bottom-right margin-bottom-5 margin-right-15" data-bind="click: $root.goToIndex.bind($root, $index)"></i>
+            </div>
+        <!-- /ko -->
+    <!-- /ko -->
+</div>
